@@ -103,9 +103,9 @@ func (p Day08) PartB(lines []string) any {
 		}
 	}
 
-	step_hits := make(map[string]int)
-	loop_lengths := make(map[string]int)
-	for _, node := range start_nodes {
+	step_hits := make([]int, len(start_nodes))
+	loop_lengths := make([]int, len(start_nodes))
+	for i, node := range start_nodes {
 		wrapped_step_map := make(map[string][]Tuple)
 		for key, _ := range map_left {
 			wrapped_step_map[key] = []Tuple{}
@@ -132,7 +132,7 @@ func (p Day08) PartB(lines []string) any {
 			}
 
 			if current[2] == 'Z' {
-				step_hits[node] = step
+				step_hits[i] = step
 			}
 
 			wrapped_step_map[current] = append(wrapped_step_map[current], 
@@ -147,21 +147,14 @@ func (p Day08) PartB(lines []string) any {
 
 			step += 1
 		}
-		loop_lengths[node] = step - loop_start_step
-	}
-	loop_lengths_list := []int{}
-	first_hit_step_list := []int{}
-	for _, node := range start_nodes {
-		loop_lengths_list = append(loop_lengths_list, loop_lengths[node])
-		first_hit_step_list = append(first_hit_step_list, step_hits[node])
+		loop_lengths[i] = step-loop_start_step
 	}
 
-
-	start_i := first_hit_step_list[0]
-	loop_i := loop_lengths_list[0]
-	for i:=0; i<=len(loop_lengths_list)-2; i++ {
-		start_j := first_hit_step_list[i+1]
-		loop_j := loop_lengths_list[i+1]
+	start_i := step_hits[0]
+	loop_i := loop_lengths[0]
+	for i:=0; i<=len(loop_lengths)-2; i++ {
+		start_j := step_hits[i+1]
+		loop_j := loop_lengths[i+1]
 		start_i = find_first_common_hit(start_i, loop_i, start_j, loop_j)
 		loop_i = lcm(loop_i, loop_j)
 	}
